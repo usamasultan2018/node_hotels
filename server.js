@@ -1,9 +1,10 @@
 const express = require("express");
 const app = express();
 const db = require("./db");
+require('dotenv').config();
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
-
+const PORT = process.env.PORT || 3000;
 const MenuItem = require('./models/menu');
 //Get method used to fetch the data from web.
 app.get("/",function(req,res){
@@ -19,6 +20,7 @@ const menuItemRoutes = require('./routes/menuItemRoutes');
 app.use('/person',personRoutes);
 app.use('/menu',menuItemRoutes);
 
-app.listen(3000,()=>{
+
+app.listen(PORT,()=>{
     console.log("Server is running");
 });
