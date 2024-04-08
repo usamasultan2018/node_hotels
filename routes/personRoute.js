@@ -1,0 +1,107 @@
+const express = require('express');
+const router = express.Router();
+const Person = require('./../models/person');
+
+
+//posting person data to the data where collection name is person..
+router.post('/',async(req,res)=>{
+
+    try{
+    
+        const data = req.body;//Assuming the request body contain the person data.
+      
+    // Create a new person doc using the mongoose model.
+
+    const newPerson = new Person(data);
+  
+   const savedPerson  =  await newPerson.save();
+   console.log("Person data saved");
+   res.status(200).send(savedPerson);
+    }
+    catch(err){
+        console.log(err);
+     res.status(500).send({error:err});
+    }
+
+});
+
+
+// get all person from collection of person
+router.get('/',async(req,res)=>{
+try{
+
+    const data =await Person.find();
+    console.log("data fetched");
+    res.status(200).send(data);
+}
+catch(err){
+res.status(500).send({error:err});
+}
+});
+
+
+
+//paramter for worker in person
+router.get('/:workType',async(req,res)=>{
+ 
+    try{
+     const workType = req.params.workType;
+     if(workType == 'manager'||workType=='chief'||workType == 'waiter'){
+        const response = await Person.find({work:workType});
+        res.status(200).json(response);
+     }
+     else{
+        res.status(404).json({error:"Invalid work type"});
+     }
+    
+    }
+    catch(err){
+        res.status(500).json({error:err.message});
+    }
+    
+    });
+
+
+// update function..
+
+router.put('/:id',async(req,res)=>{
+try{
+    const personId = req.params.id;//Extracting the id from URl parameter.
+    const updatedPersonData = req.body;//Update data for the person.
+
+    const response = await Person.findByIdAndUpdate(personId,updatedPersonData,{
+        new:true,
+        runValidators:true,
+    });
+
+    if(!response){
+        console.log("nsod");
+        return res.status(404).json({error:"Person not found!"});
+    }
+    console.log("Data updated");
+    res.status(200).json(response);
+    
+
+}
+catch(e){
+    res.status(500).json({error:e.message});
+}
+});
+
+router.delete('/:id', async (req, res) => {
+    try {
+        const personId = req.params.id;
+        const response = await Person.findByIdAndDelete(personId);
+        if (!response) {
+            return res.status(404).json({ error: "Person not found!" });
+        }
+        console.log("Person data deleted");
+        res.status(200).json({ message: "Person Deleted Successfully" });
+    } catch (e) {
+        console.error('Error deleting person:', e);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
+module.exports = router;    
