@@ -1,29 +1,41 @@
 const express = require("express");
 const app = express();
 const db = require("./db");
+
 require('dotenv').config();
 const bodyParser = require('body-parser');
+const passport = require('./auth');
+
+
 const PORT = process.env.PORT || 3000;
-const MenuItem = require('./models/menu');
 const personRoutes = require('./routes/personRoute');
 const menuItemRoutes = require('./routes/menuItemRoutes');
 
+
+app.use(bodyParser.json());//req.body
+
+// Middleware function
+const logRequest = (req, res, next) => {
+    console.log(`${new Date().toLocaleString()} Request Made to : ${req.originalUrl}`);
+    next();// move to the next phase
+}
+
 // Middleware
-app.use(bodyParser.json());
+app.use(logRequest);
+
+app.use(passport.initialize());
+const localAuthMiddleware = passport.authenticate('local',{session:false});
+
 
 // Routes
-app.get("/", (req, res) => {
+app.get("/",(req, res) => {
     res.send("Welcome to my Hotel");
 });
 
 app.use('/person', personRoutes);
-app.use('/menu', menuItemRoutes);
+app.use('/menu',localAuthMiddleware, menuItemRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something went wrong!');
-});
+
 
 // Start the server
 app.listen(PORT, () => {

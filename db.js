@@ -2,13 +2,10 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 // Define the MongoDB connection URL.
-const mongoUrl = process.env.MONGODB_URL;
+const mongoUrl = process.env.MONGODB_URL_LOCAL;
 
 // Set up MongoDB connection with options
-mongoose.connect(mongoUrl, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(mongoUrl)
   .then(() => {
     console.log("Connected to MongoDB server");
   })
