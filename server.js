@@ -29,7 +29,7 @@ const localAuthMiddleware = passport.authenticate('local',{session:false});
 
 // Routes
 app.get("/",(req, res) => {
-    res.send("Welcome to my Hotel");
+    res.send("Welcome to my Hotel Pakistan");
 });
 
 app.use('/person', personRoutes);
