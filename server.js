@@ -33,7 +33,7 @@ app.get("/",(req, res) => {
 });
 
 app.use('/person', personRoutes);
-app.use('/menu',localAuthMiddleware, menuItemRoutes);
+app.use('/menu', menuItemRoutes);
 
 
 
